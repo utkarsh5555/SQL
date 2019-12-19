@@ -1,0 +1,20 @@
+USE --**DBName**
+GO
+/****** Object:  UserDefinedFunction [dbo].[InitCap]    Script Date: 19/12/2019 11:00:36 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[InitCap](@TheString varchar(8000))
+RETURNS varchar(8000)
+AS
+BEGIN
+   DECLARE @pos int
+   SET @TheString = Lower(@TheString)
+   SET @pos = 1
+   WHILE @pos IS NOT NULL BEGIN
+      SET @TheString = Stuff(@TheString,@pos,1,Upper(SubString(@TheString,@pos,1)))
+      SET @pos = @pos + NullIf(PatIndex('%[^a-z0-9][a-z]%',SubString(@TheString,@pos+1,8000)),0) + 1
+   END
+   RETURN @TheString
+END
